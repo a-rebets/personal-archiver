@@ -16,14 +16,14 @@ default_events:
 # - check_run
 # - check_suite
 # - commit_comment
-# - create
-# - delete
+- create
+- delete
 # - deployment
 # - deployment_status
 # - fork
 # - gollum
 # - issue_comment
-- issues
+# - issues
 # - label
 # - milestone
 # - member
@@ -40,7 +40,7 @@ default_events:
 # - pull_request_review_comment
 # - push
 # - release
-# - repository
+- repository
 # - repository_import
 # - status
 # - team
@@ -54,7 +54,7 @@ default_events:
 default_permissions:
   # Repository creation, deletion, settings, teams, and collaborators.
   # https://developer.github.com/v3/apps/permissions/#permission-on-administration
-  # administration: read
+  administration: write
 
   # Checks on code.
   # https://developer.github.com/v3/apps/permissions/#permission-on-checks
@@ -62,7 +62,7 @@ default_permissions:
 
   # Repository contents, commits, branches, downloads, releases, and merges.
   # https://developer.github.com/v3/apps/permissions/#permission-on-contents
-  # contents: read
+  contents: write
 
   # Deployments and deployment statuses.
   # https://developer.github.com/v3/apps/permissions/#permission-on-deployments
@@ -126,14 +126,14 @@ default_permissions:
 
 
 # The name of the GitHub App. Defaults to the name specified in package.json
-# name: My Probot App
+name: Personal Archiver
 
 # The homepage of your GitHub App.
 # url: https://example.com/
 
 # A description of the GitHub App.
-# description: A description of my awesome app
+description: An app that manages the storage of docs, media and demos for Github repositories listed on a developer's personal website
 
 # Set to true when your GitHub App is available to the public or false when it is only accessible to the owner of the app.
 # Default: true
-# public: false
+public: false

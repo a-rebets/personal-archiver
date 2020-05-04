@@ -1,19 +1,30 @@
+const initBase = require('./src/initBaseRepo')
+const updateBase = require('./src/updateBaseRepo')
+const events = ['installation.created', 'installation_repositories']
+const checkForBase = (repo, present) => present ? repo.name === 'archive' : repo.name !== 'archive'
+
 /**
- * This is the main entrypoint to your Probot app
+ * The main entrypoint to the Probot app
  * @param {import('probot').Application} app
  */
 module.exports = app => {
-  // Your code here
-  app.log('Yay, the app was loaded!')
+  app.log('Personal Archiver is running successfully.')
 
-  app.on('issues.opened', async context => {
-    const issueComment = context.issue({ body: 'Thanks for opening this issue!' })
-    return context.github.issues.createComment(issueComment)
+  app.on(events, async (context) => {
+    app.log('App has been successfully installed.')
+    app.log('App is running as per ' + context.event)
+
+    let repoList = []
+    const owner = context.payload.sender.login
+    if (context.event === 'installation' && context.payload.action === 'created') {
+      repoList = context.payload.repositories
+      console.log(repoList)
+      if (repoList.filter(r => checkForBase(r, true)).length === 0) { await initBase(context) }
+      // await updateBase(context, repoList.filter(r => checkForBase(r, false)))
+    } else if (context.event === 'installation_repositories') {
+      repoList = context.payload.repositories_added
+      console.log(repoList)
+      await updateBase(context, owner, repoList)
+    }
   })
-
-  // For more information on building apps:
-  // https://probot.github.io/docs/
-
-  // To get your app running against GitHub, see:
-  // https://probot.github.io/docs/development/
 }

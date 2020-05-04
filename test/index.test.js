@@ -3,12 +3,18 @@ const nock = require('nock')
 const myProbotApp = require('..')
 const { Probot } = require('probot')
 // Requiring our fixtures
-const payload = require('./fixtures/issues.opened')
-const issueCreatedBody = { body: 'Thanks for opening this issue!' }
+const payload = require('./fixtures/installation')
+const repoCreatedBody = {
+  name: 'archive',
+  description: 'A repository used by Personal Archiver bot',
+  private: true
+}
 const fs = require('fs')
 const path = require('path')
 
-describe('My Probot app', () => {
+nock.disableNetConnect()
+
+describe('Personal Archiver', () => {
   let probot
   let mockCert
 
@@ -21,38 +27,30 @@ describe('My Probot app', () => {
   })
 
   beforeEach(() => {
-    nock.disableNetConnect()
     probot = new Probot({ id: 123, cert: mockCert })
     // Load our app into probot
     probot.load(myProbotApp)
   })
 
-  test('creates a comment when an issue is opened', async () => {
+  test('intiates a repository after receiving an installation event', async () => {
     // Test that we correctly return a test token
     nock('https://api.github.com')
-      .post('/app/installations/2/access_tokens')
+      .post('/app/installations/8585524/access_tokens')
       .reply(200, { token: 'test' })
 
-    // Test that a comment is posted
+    // Test that a repo is created
     nock('https://api.github.com')
-      .post('/repos/hiimbex/testing-things/issues/1/comments', (body) => {
-        expect(body).toMatchObject(issueCreatedBody)
+      .post('/user/repos', (body) => {
+        expect(body).toMatchObject(repoCreatedBody)
         return true
       })
       .reply(200)
 
     // Receive a webhook event
-    await probot.receive({ name: 'issues', payload })
-  })
+    await probot.receive({ name: 'installation', payload })
+  }, 25000)
 
   afterEach(() => {
     nock.cleanAll()
-    nock.enableNetConnect()
   })
 })
-
-// For more information about testing with Jest see:
-// https://facebook.github.io/jest/
-
-// For more information about testing with Nock see:
-// https://github.com/nock/nock
