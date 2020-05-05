@@ -1,7 +1,7 @@
 const initBase = require('./src/initBaseRepo')
 const updateBase = require('./src/updateBaseRepo')
 const events = ['installation.created', 'installation_repositories']
-const checkForBase = (repo, present) => present ? repo.name === 'archive' : repo.name !== 'archive'
+const checkRepoName = (repo, present) => present ? repo.name === 'archive' : repo.name !== 'archive'
 
 /**
  * The main entrypoint to the Probot app
@@ -17,14 +17,18 @@ module.exports = app => {
     let repoList = []
     const owner = context.payload.sender.login
     if (context.event === 'installation' && context.payload.action === 'created') {
-      repoList = context.payload.repositories
-      console.log(repoList)
-      if (repoList.filter(r => checkForBase(r, true)).length === 0) { await initBase(context) }
-      // await updateBase(context, repoList.filter(r => checkForBase(r, false)))
+      repoList = context.payload.repositories || []
+      const baseIsNotPresent = repoList.slice().filter(r => checkRepoName(r, true)).length === 0
+
+      if (baseIsNotPresent) { await initBase(context) }
+      for (const repo of repoList.filter(r => checkRepoName(r, false)).slice(0, 2)) {
+        await updateBase(context, owner, repo)
+      }
     } else if (context.event === 'installation_repositories') {
-      repoList = context.payload.repositories_added
-      console.log(repoList)
-      await updateBase(context, owner, repoList)
+      repoList = context.payload.repositories_added || []
+      for (const repo of repoList) {
+        await updateBase(context, owner, repo)
+      }
     }
   })
 }

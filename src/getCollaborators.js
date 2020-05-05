@@ -1,9 +1,9 @@
 module.exports = (context, owner, repo) => {
-  console.log('In getCollaborators.js...')
-  let collaborators
-  context.github.paginate(
-    context.github.repos.listCollaborators,
-    { owner: owner, repo: repo }
-  ).then((res) => { collaborators = res })
-  return collaborators
+  context.log('In getCollaborators.js...')
+  return context.github.paginate(
+    context.github.repos.listCollaborators.endpoint.merge({
+      owner: owner, repo: repo
+    }),
+    res => res.data
+  )
 }
