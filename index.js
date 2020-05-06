@@ -1,7 +1,7 @@
 const initBase = require('./src/initBaseRepo')
 const updateBase = require('./src/updateBaseRepo')
 const events = ['installation.created', 'installation_repositories']
-const checkRepoName = (repo, present) => present ? repo.name === 'archive' : repo.name !== 'archive'
+const baseName = process.env.BASE_REPO
 
 /**
  * The main entrypoint to the Probot app
@@ -9,25 +9,34 @@ const checkRepoName = (repo, present) => present ? repo.name === 'archive' : rep
  */
 module.exports = app => {
   app.log('Personal Archiver is running successfully.')
-
   app.on(events, async (context) => {
-    app.log('App has been successfully installed.')
-    app.log('App is running as per ' + context.event)
-
-    let repoList = []
-    const owner = context.payload.sender.login
-    if (context.event === 'installation' && context.payload.action === 'created') {
-      repoList = context.payload.repositories || []
-      const baseIsNotPresent = repoList.slice().filter(r => checkRepoName(r, true)).length === 0
-
-      if (baseIsNotPresent) { await initBase(context) }
-      for (const repo of repoList.filter(r => checkRepoName(r, false)).slice(0, 2)) {
-        await updateBase(context, owner, repo)
+    let newRepos
+    let baseCheckNeeded = true
+    const rFilter = r => r.filter(r => r.name !== baseName)
+    const paramObj = {
+      ctx: context,
+      evt: { e: context.event, a: context.payload.action },
+      own: context.payload.sender.login
+    }
+    app.log('App is running as per ' + paramObj.evt.e)
+    if (paramObj.evt.e === 'installation' && paramObj.evt.a === 'created') {
+      newRepos = context.payload.repositories || []
+      if (!newRepos.slice().map(r => r.name).includes(baseName)) {
+        await initBase(context)
+        baseCheckNeeded = false
       }
-    } else if (context.event === 'installation_repositories') {
-      repoList = context.payload.repositories_added || []
-      for (const repo of repoList) {
-        await updateBase(context, owner, repo)
+      app.log('App has been successfully installed.')
+    } else if (paramObj.evt.e === 'installation_repositories') {
+      newRepos = context.payload.repositories_added || []
+    }
+    const presentRepos = (baseCheckNeeded) ? (await context.github.repos.getContents({
+      owner: paramObj.own, repo: baseName, path: ''
+    })).data.filter(el => el.type === 'dir').map(d => d.name) : []
+    if (newRepos.length > 0) {
+      for (const repo of rFilter(newRepos).slice(0, 2)) {
+        await updateBase({
+          ...paramObj, rep: repo, ini: presentRepos.includes(repo.name)
+        })
       }
     }
   })

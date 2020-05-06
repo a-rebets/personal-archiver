@@ -17,10 +17,11 @@
     "dev": "nodemon",
     "start": "probot run ./index.js",
     "lint": "standard --fix",
-    "test": "jest --detectOpenHandles && standard",
+    "test": "set BASE_REPO=archive&&jest --detectOpenHandles && standard",
     "test:watch": "jest --watch --notify --notifyMode=change --coverage"
   },
   "dependencies": {
+    "memjs": "^1.2.2",
     "node-telegram-bot-api": "^0.40.0",
     "probot": "^9.5.3"
   },
