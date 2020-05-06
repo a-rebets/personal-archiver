@@ -6,3 +6,5 @@ npm-debug.log
 package-lock.json
 coverage
 test/fixtures/*.json
+*.md
+!template_info.md

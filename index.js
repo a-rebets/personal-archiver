@@ -18,10 +18,10 @@ module.exports = app => {
       evt: { e: context.event, a: context.payload.action },
       own: context.payload.sender.login
     }
-    app.log('App is running as per ' + paramObj.evt.e)
+    app.log(`App is running as per [${paramObj.evt.e}]`)
     if (paramObj.evt.e === 'installation' && paramObj.evt.a === 'created') {
       newRepos = context.payload.repositories || []
-      if (!newRepos.slice().map(r => r.name).includes(baseName)) {
+      if (![...newRepos].map(r => r.name).includes(baseName)) {
         await initBase(context)
         baseCheckNeeded = false
       }
@@ -35,7 +35,7 @@ module.exports = app => {
     if (newRepos.length > 0) {
       for (const repo of rFilter(newRepos).slice(0, 2)) {
         await updateBase({
-          ...paramObj, rep: repo, ini: presentRepos.includes(repo.name)
+          ...paramObj, rep: repo, ini: !presentRepos.includes(repo.name)
         })
       }
     }

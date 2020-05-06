@@ -7,12 +7,13 @@ const { Probot } = require('probot')
 // Requiring our fixtures
 const payloadEmpty = require('./fixtures/installation1')
 const payloadFull = require('./fixtures/installation2')
-const contribJSON = require('./fixtures/getContributors')
-const contentResponse = require('./fixtures/contents')
+const contribResponse = require('./fixtures/contributors')
+const contentResponse = require('./fixtures/archive.contents')
+const details1 = require('./fixtures/w8.details')
+const details2 = require('./fixtures/distributa.details')
+const readme = require('./fixtures/readme')
 
 const possibleRepoNames = Object.assign({}, payloadFull).repositories.slice(1).map(x => x.name)
-const contribResponse = contribJSON.data.viewer.repositories.all
-  .filter(el => possibleRepoNames.includes(el.name)).map(el => el.contributors.userList)
 const baseCreatedBody = {
   name: process.env.BASE_REPO,
   description: 'A repository used by Personal Archiver bot',
@@ -24,21 +25,48 @@ nock.disableNetConnect()
 describe('Personal Archiver request/response tests', () => {
   let probot
   let mockCert
-
-  const getTestObj = (repname, collabs) => ({
-    message: `Updated repository info file for <${repname}>`,
-    content: Buffer.from(
-      `contributors:\n- ${collabs.map(c => c.login).join('\n- ')}`
-    ).toString('base64')
+  let mockMd1
+  let mockMd2
+  const readmeCreate = (text) => {
+    const res = Object.assign({}, readme)
+    res.content = Buffer.from(text).toString('base64')
+    return res
+  }
+  const getTestObj = (repname, inp) => ({
+    message: `Updated repository INFO.md file for <${repname}>`,
+    content: Buffer.from(inp).toString('base64')
   })
 
-  beforeAll((done) => {
-    fs.readFile(path.join(__dirname, 'fixtures/mock-cert.pem'), (err, cert) => {
-      if (err) return done(err)
-      mockCert = cert
-      done()
+  beforeAll(() => {
+    const promArr = []
+    promArr.push(fs.promises.readFile(path.join(__dirname, 'fixtures/mock-cert.pem'), 'utf8'))
+    promArr.push(fs.promises.readFile(path.join(__dirname, 'fixtures/distributa.info.md'), 'utf8'))
+    promArr.push(fs.promises.readFile(path.join(__dirname, 'fixtures/w8.info.md'), 'utf8'))
+    return Promise.all(promArr).then((vals) => {
+      [mockCert, mockMd2, mockMd1] = vals
     })
   })
+  // const promises = []
+  // fs.readFile(, (err, cert) => {
+  //   if (err) return done(err)
+  //   mockCert = cert
+  //   done()
+  // })
+  // promises.push(fs.readFile(
+  //   path.join(__dirname, 'fixtures/distributa.info.md'), 'utf8',
+  //   (err, file) => {
+  //     if (err) return done(err)
+  //     mockMd2 = file
+  //   }
+  // ))
+  // promises.push(fs.readFile(
+  //   path.join(__dirname, 'fixtures/w8.info.md'), 'utf8',
+  //   (err, file) => {
+  //     if (err) return done(err)
+  //     mockMd1 = file
+  //   }
+  // ))
+  // Promise.all(promises).then(() => done())
 
   beforeEach(() => {
     probot = new Probot({ id: 123, cert: mockCert })
@@ -77,12 +105,24 @@ describe('Personal Archiver request/response tests', () => {
     // Test that contributors are requested for repo No 1
     nock('https://api.github.com')
       .get(`/repos/apopelyshev/${possibleRepoNames[0]}/contributors`)
-      .reply(200, contribResponse[0])
+      .reply(200, contribResponse)
+
+    // Test that repo info is requested for repo No 1
+    nock('https://api.github.com')
+      .get(`/repos/apopelyshev/${possibleRepoNames[0]}`)
+      .reply(200, details1)
+
+    // Test that README is requested for repo No 1
+    nock('https://api.github.com')
+      .get(`/repos/apopelyshev/${possibleRepoNames[0]}/readme`)
+      .reply(200, readmeCreate(`#  WIZ Faculty Math bot
+      
+      some more info`))
 
     // Test that the repo No 1 is updated
     nock('https://api.github.com')
-      .put(`/repos/apopelyshev/archive/contents/${possibleRepoNames[0]}/.info`, (body) => {
-        expect(body).toMatchObject(getTestObj(possibleRepoNames[0], contribResponse[0]))
+      .put(`/repos/apopelyshev/archive/contents/${possibleRepoNames[0]}/INFO.md`, (body) => {
+        expect(body).toMatchObject(getTestObj(possibleRepoNames[0], mockMd1))
         return true
       })
       .reply(200)
@@ -90,19 +130,31 @@ describe('Personal Archiver request/response tests', () => {
     // Test that contributors are requested for repo No 2
     nock('https://api.github.com')
       .get(`/repos/apopelyshev/${possibleRepoNames[1]}/contributors`)
-      .reply(200, contribResponse[1])
+      .reply(200, contribResponse)
+
+    // Test that repo info is requested for repo No 2
+    nock('https://api.github.com')
+      .get(`/repos/apopelyshev/${possibleRepoNames[1]}`)
+      .reply(200, details2)
+
+    // Test that README is requested for repo No 2
+    nock('https://api.github.com')
+      .get(`/repos/apopelyshev/${possibleRepoNames[1]}/readme`)
+      .reply(200, readmeCreate(`#   Distributa - social media contest tool
+      
+      some more info`))
 
     // Test that the repo No 2 is updated
     nock('https://api.github.com')
-      .put(`/repos/apopelyshev/archive/contents/${possibleRepoNames[1]}/.info`, (body) => {
-        expect(body).toMatchObject(getTestObj(possibleRepoNames[1], contribResponse[1]))
+      .put(`/repos/apopelyshev/archive/contents/${possibleRepoNames[1]}/INFO.md`, (body) => {
+        expect(body).toMatchObject(getTestObj(possibleRepoNames[1], mockMd2))
         return true
       })
       .reply(200)
 
     // Receive a webhook event
     await probot.receive({ name: 'installation', payload: payloadFull })
-  }, 10000)
+  }, 30000)
 
   afterEach(() => {
     nock.cleanAll()
