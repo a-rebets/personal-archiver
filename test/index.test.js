@@ -46,27 +46,6 @@ describe('Personal Archiver request/response tests', () => {
       [mockCert, mockMd2, mockMd1] = vals
     })
   })
-  // const promises = []
-  // fs.readFile(, (err, cert) => {
-  //   if (err) return done(err)
-  //   mockCert = cert
-  //   done()
-  // })
-  // promises.push(fs.readFile(
-  //   path.join(__dirname, 'fixtures/distributa.info.md'), 'utf8',
-  //   (err, file) => {
-  //     if (err) return done(err)
-  //     mockMd2 = file
-  //   }
-  // ))
-  // promises.push(fs.readFile(
-  //   path.join(__dirname, 'fixtures/w8.info.md'), 'utf8',
-  //   (err, file) => {
-  //     if (err) return done(err)
-  //     mockMd1 = file
-  //   }
-  // ))
-  // Promise.all(promises).then(() => done())
 
   beforeEach(() => {
     probot = new Probot({ id: 123, cert: mockCert })
