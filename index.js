@@ -5,7 +5,7 @@ const updateBase = require('./src/updateBaseRepo')
 const events = ['installation.created', 'installation_repositories']
 const baseName = process.env.BASE_REPO
 const TgToken = process.env.TELEGRAM_TOKEN
-const bot = new TelegramBot(TgToken, {
+const bot = new TgBot(TgToken, {
   polling: true, webHook: { port: process.env.PORT }
 })
 const cache = memjs.Client.create(process.env.MEMCACHIER_SERVERS, {
@@ -14,7 +14,7 @@ const cache = memjs.Client.create(process.env.MEMCACHIER_SERVERS, {
   keepAlive: true
 })
 const cacheSetCallback = (err, val) => {
-  if(err) console.error("An error occured while trying to set a value to the Memcachier")
+  if (err) console.error('An error occured while trying to set a value to the Memcachier')
 }
 
 /**
@@ -23,7 +23,7 @@ const cacheSetCallback = (err, val) => {
  */
 module.exports = app => {
   app.log('Personal Archiver is running successfully.')
-  initBot();
+  initBot()
   /* app.on(events, async (context) => {
     let newRepos
     let baseCheckNeeded = true
@@ -60,9 +60,9 @@ module.exports = app => {
   // cache.set('hello', 'memcachier', {expires: 0}, cacheSetCallback)
 }
 
-function initBot() {
-  bot.setWebHook(`${process.env.APP_URL}/bot${TgToken}`);
-  bot.on('message', function onMessage(msg) {
-    bot.sendMessage(msg.chat.id, 'I am alive on Heroku!');
-  });
+function initBot () {
+  bot.setWebHook(`${process.env.APP_URL}/bot${TgToken}`)
+  bot.on('message', function onMessage (msg) {
+    bot.sendMessage(msg.chat.id, 'I am alive on Heroku!')
+  })
 }
