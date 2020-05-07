@@ -5,13 +5,13 @@ const path = require('path')
 const archiver = require('..')
 const { Probot } = require('probot')
 // Requiring our fixtures
-const payloadEmpty = require('./fixtures/installation1')
-const payloadFull = require('./fixtures/installation2')
-const contribResponse = require('./fixtures/contributors')
-const contentResponse = require('./fixtures/archive.contents')
-const details1 = require('./fixtures/w8.details')
-const details2 = require('./fixtures/distributa.details')
-const readme = require('./fixtures/readme')
+const payloadEmpty = require('./fixtures/json/installation1')
+const payloadFull = require('./fixtures/json/installation2')
+const contribResponse = require('./fixtures/json/contributors')
+const contentResponse = require('./fixtures/json/archive.contents')
+const details1 = require('./fixtures/json/w8.details')
+const details2 = require('./fixtures/json/distributa.details')
+const readme = require('./fixtures/json/readme')
 
 const possibleRepoNames = Object.assign({}, payloadFull).repositories.slice(1).map(x => x.name)
 const baseCreatedBody = {
@@ -106,6 +106,10 @@ describe('Personal Archiver request/response tests', () => {
       })
       .reply(200)
 
+    nock('https://api.github.com')
+      .put(`/repos/apopelyshev/archive/contents/${possibleRepoNames[0]}/media/logo.svg`)
+      .reply(200)
+
     // Test that contributors are requested for repo No 2
     nock('https://api.github.com')
       .get(`/repos/apopelyshev/${possibleRepoNames[1]}/contributors`)
@@ -129,6 +133,10 @@ describe('Personal Archiver request/response tests', () => {
         expect(body).toMatchObject(getTestObj(possibleRepoNames[1], mockMd2))
         return true
       })
+      .reply(200)
+
+    nock('https://api.github.com')
+      .put(`/repos/apopelyshev/archive/contents/${possibleRepoNames[1]}/media/logo.svg`)
       .reply(200)
 
     // Receive a webhook event

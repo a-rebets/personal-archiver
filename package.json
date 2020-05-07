@@ -21,6 +21,7 @@
     "test:watch": "jest --watch --notify --notifyMode=change --coverage"
   },
   "dependencies": {
+    "canvas": "^2.6.1",
     "memjs": "^1.2.2",
     "node-telegram-bot-api": "^0.40.0",
     "probot": "^9.5.3"
