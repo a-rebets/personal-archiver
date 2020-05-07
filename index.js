@@ -5,9 +5,7 @@ const updateBase = require('./src/updateBaseRepo')
 const events = ['installation.created', 'installation_repositories']
 const baseName = process.env.BASE_REPO
 const TgToken = process.env.TELEGRAM_TOKEN
-const bot = new TgBot(TgToken, {
-  polling: true, webHook: { port: process.env.PORT }
-})
+const bot = new TgBot(TgToken, {webHook: { port: process.env.PORT }})
 const cache = memjs.Client.create(process.env.MEMCACHIER_SERVERS, {
   failover: true,
   timeout: 1,
