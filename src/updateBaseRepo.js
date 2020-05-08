@@ -20,7 +20,6 @@ const replaceMap = new Map([
 ])
 
 async function processInfo ({ ctx, own, rep }) {
-  let template
   const defaults = { owner: own, repo: rep.name }
   insert('c', (await getContribs(ctx, defaults)).map(c => c.login).join(','))
   const { created_at: date, html_url: link } = (await ctx.github.repos.get(defaults)).data
@@ -29,8 +28,8 @@ async function processInfo ({ ctx, own, rep }) {
   const title = decode64((await ctx.github.repos.getReadme(defaults)).data.content)
     .match(/#\s+(.*)[\r\n]/)
   insert('t', (title) ? title[1] : rep.name)
-  await Promise.resolve(fs.promises.readFile(
-    path.join(__dirname, './static/template_info.md'), 'utf8').then((val) => { template = val }))
+  let template = await Promise.resolve(fs.promises.readFile(
+    path.join(__dirname, './static/template_info.md'), 'utf8'))
   for (const change of Array.from(replaceMap).map(el => el[1])) {
     const old = `$${change.tag}/$`
     template = template.replace(old, old.replace('/$', `/${change.to}$`))

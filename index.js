@@ -1,8 +1,12 @@
+const fs = require('fs')
 const memjs = require('memjs')
+const path = require('path')
 const TgBot = require('node-telegram-bot-api')
+
 const initBase = require('./src/initBaseRepo')
 const updateBase = require('./src/updateBaseRepo')
 const events = ['installation.created', 'installation_repositories']
+
 const baseName = process.env.BASE_REPO
 const TgToken = process.env.TELEGRAM_TOKEN
 const bot = new TgBot(TgToken)
@@ -66,22 +70,30 @@ function initBot (router) {
     res.sendStatus(200)
   })
   bot.setWebHook(`${process.env.APP_URL}/bot${TgToken}`)
-  bot.on('message', function onMessage (msg) {
-    bot.sendMessage(msg.chat.id, 'I am alive on Heroku!')
+
+  bot.onText(/\/start/, async (msg) => {
+    const opts = {
+      caption: `Hi there! Thanks for using <b>Personal Archiver</b> ${String.fromCodePoint(128522)}
+
+      Now this bot knows who to ask, when performing various activities with the repositories.
+
+      <i>&lt; Yoga-octocat by Nadiia B. © Dribble &gt;</i>`,
+      parse_mode: 'HTML'
+    }
+    const file = await Promise.resolve(fs.promises.readFile(
+      path.join(__dirname, 'src/static/media/octocat.gif')
+    ))
+    bot.sendPhoto(msg.from.id, file, opts)
   })
   // Matches /editable
-  bot.onText(/\/editable/, function onEditableText (msg) {
+  bot.onText(/\/editable/, (msg) => {
     const opts = {
       reply_markup: {
         inline_keyboard: [
-          [
-            {
-              text: 'Edit Text',
-              // we shall check for this value when we listen
-              // for "callback_query"
-              callback_data: 'edit'
-            }
-          ]
+          [{
+            text: 'Edit Text',
+            callback_data: 'edit'
+          }]
         ]
       }
     }
