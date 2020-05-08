@@ -73,17 +73,15 @@ function initBot (router) {
 
   bot.onText(/\/start/, async (msg) => {
     const opts = {
-      caption: `Hi there! Thanks for using <b>Personal Archiver</b> ${String.fromCodePoint(128522)}
-
-      Now this bot knows who to ask, when performing various activities with the repositories.
-
-      <i>&lt; Yoga-octocat by Nadiia B. © Dribble &gt;</i>`,
+      caption: `Hi there! Thanks for using <b>Personal Archiver</b> ${String.fromCodePoint(128522)}\n\n`
+      + 'Now this bot knows who to ask, when performing various activities with the repositories.\n\n'
+      + '<i>/ Yoga-octocat by Nadiia B.\n© Dribble /</i>',
       parse_mode: 'HTML'
     }
     const file = await Promise.resolve(fs.promises.readFile(
       path.join(__dirname, 'src/static/media/octocat.gif')
     ))
-    bot.sendPhoto(msg.from.id, file, opts)
+    bot.sendPhoto(msg.from.id, file, opts, { filename: 'octocat', contentType: 'image/gif' })
   })
   // Matches /editable
   bot.onText(/\/editable/, (msg) => {
