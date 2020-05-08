@@ -5,6 +5,7 @@ const TgBot = require('node-telegram-bot-api')
 
 const initBase = require('./src/initBaseRepo')
 const updateBase = require('./src/updateBaseRepo')
+const def = require('./src/defaults')
 const events = ['installation.created', 'installation_repositories']
 
 const baseName = process.env.BASE_REPO
@@ -16,7 +17,7 @@ const cache = memjs.Client.create(process.env.MEMCACHIER_SERVERS, {
   keepAlive: true
 })
 const cacheSetCallback = (err, val) => {
-  if (err) console.error('An error occured while trying to set a value to the Memcachier')
+  if (err) console.error(def.cache_err_msg)
 }
 
 /**
@@ -71,21 +72,17 @@ function initBot (router) {
   })
   bot.setWebHook(`${process.env.APP_URL}/bot${TgToken}`)
 
-  bot.on('sticker', (msg) => {
-    bot.sendMessage(msg.from.id, msg.sticker.file_id)
-  })
-
   bot.onText(/\/start/, async (msg) => {
     const opts = {
-      caption: `Hi there! Thanks for using <b>Personal Archiver</b> ${String.fromCodePoint(128522)}\n\n` +
-      'Now this bot knows who to ask, when performing various activities with the repositories.\n\n' +
-      '<i>/ Yoga-octocat by Nadiia B.\n© Dribble /</i>',
+      caption: def.welcome_msg(msg.from.first_name),
       parse_mode: 'HTML'
     }
     const file = await Promise.resolve(fs.promises.readFile(
       path.join(__dirname, 'src/static/media/octocat.gif')
     ))
-    bot.sendDocument(msg.from.id, file, opts, { filename: 'octocat', contentType: 'image/gif' })
+    bot.sendDocument(msg.from.id, file, opts,
+      { filename: 'octocat.gif', contentType: 'image/gif' })
+    bot.sendSticker(msg.from.id, def.tg_stickers.hey)
   })
   // Matches /editable
   bot.onText(/\/editable/, (msg) => {
@@ -93,8 +90,12 @@ function initBot (router) {
       reply_markup: {
         inline_keyboard: [
           [{
-            text: 'Edit Text',
-            callback_data: 'edit'
+            text: def.emoji(0x1F44D),
+            callback_data: 'skip'
+          }],
+          [{
+            text: def.emoji(0x1F44E),
+            callback_data: 'add'
           }]
         ]
       }
@@ -110,12 +111,7 @@ function initBot (router) {
       chat_id: msg.chat.id,
       message_id: msg.message_id
     }
-    let text
-
-    if (action === 'edit') {
-      text = 'Edited Text'
-    }
-
+    const text = (action === 'skip') ? 'Get lost!' : 'Edited Text'
     bot.editMessageText(text, opts)
   })
 }
