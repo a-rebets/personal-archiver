@@ -62,11 +62,46 @@ module.exports = app => {
 function initBot (router) {
   router.use(require('express').json())
   router.post(`/bot${TgToken}`, (req, res) => {
-    bot.processUpdate(req.body);
-    res.sendStatus(200);
+    bot.processUpdate(req.body)
+    res.sendStatus(200)
   })
-  bot.setWebHook(`${process.env.APP_URL}/bot${TgToken}`);
+  bot.setWebHook(`${process.env.APP_URL}/bot${TgToken}`)
   bot.on('message', function onMessage (msg) {
     bot.sendMessage(msg.chat.id, 'I am alive on Heroku!')
+  })
+  // Matches /editable
+  bot.onText(/\/editable/, function onEditableText (msg) {
+    const opts = {
+      reply_markup: {
+        inline_keyboard: [
+          [
+            {
+              text: 'Edit Text',
+              // we shall check for this value when we listen
+              // for "callback_query"
+              callback_data: 'edit'
+            }
+          ]
+        ]
+      }
+    }
+    bot.sendMessage(msg.from.id, 'Original Text', opts)
+  })
+
+  // Handle callback queries
+  bot.on('callback_query', function onCallbackQuery (callbackQuery) {
+    const action = callbackQuery.data
+    const msg = callbackQuery.message
+    const opts = {
+      chat_id: msg.chat.id,
+      message_id: msg.message_id
+    }
+    let text
+
+    if (action === 'edit') {
+      text = 'Edited Text'
+    }
+
+    bot.editMessageText(text, opts)
   })
 }
