@@ -22,6 +22,7 @@
   },
   "dependencies": {
     "canvas": "^2.6.1",
+    "express-sslify": "^1.2.0",
     "memjs": "^1.2.2",
     "node-telegram-bot-api": "^0.40.0",
     "probot": "^9.5.3"
