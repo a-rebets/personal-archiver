@@ -1,4 +1,4 @@
-const emoji = (...num) => String.fromCodePoint(num)
+const emoji = String.fromCodePoint
 
 module.exports = {
   emoji: emoji,

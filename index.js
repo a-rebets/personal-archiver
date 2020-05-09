@@ -48,6 +48,10 @@ module.exports = app => {
     app.log(req.body)
     res.sendStatus(200)
   })
+  app.route().get('/setup', (req, res) => {
+    app.log(req.body)
+    res.sendStatus(200)
+  })
 
   app.on(events, async (context) => {
     let receivedRepos
