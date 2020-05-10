@@ -43,7 +43,6 @@ const getKeyboardOptsResp = (path) => ({
  * @param {import('probot').Application} app
  */
 module.exports = app => {
-  
   app.route().use(enforce.HTTPS({ trustProtoHeader: true }))
   app.log('Personal Archiver is running successfully.')
   initBot(app.route('/tg'))
@@ -53,7 +52,7 @@ module.exports = app => {
       privateKey: process.env.PRIVATE_KEY.replace(/\\n/g, '\n'),
       clientId: process.env.CLIENT_ID,
       clientSecret: process.env.CLIENT_SECRET,
-      redirect_uri: "https://github-archiver.online/setup/success"
+      redirect_uri: 'https://github-archiver.online/setup/success'
     })
     const authData = await auth({ type: 'oauth', code: req.query.code })
     app.log(authData)
