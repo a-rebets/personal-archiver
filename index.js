@@ -47,18 +47,15 @@ module.exports = app => {
   app.log('Personal Archiver is running successfully.')
   initBot(app.route('/tg'))
   app.route().get('/setup', async (req, res) => {
-    app.log(`${req.query.code} ${req.query.installation_id}`)
-    const tempOctokit = new Octokit({
-      authStrategy: createAppAuth,
-      auth: {
-        id: Number.parseInt(process.env.APP_ID),
-        installationId: Number.parseInt(req.query.installation_id),
-        privateKey: process.env.PRIVATE_KEY.replace(/\\n/g, '\n')
-      }
-    })
-    const token = await tempOctokit.auth({ type: 'oauth', code: Number.parseInt(req.query.code) })
-    app.log(token)
-    const baseOctokit = new Octokit({ auth: token })
+    app.log(`${req.query.code} ${req.query.installation_id} ${process.env.PRIVATE_KEY.replace(/\\n/g, '\n')}`)
+    const auth = createAppAuth({
+      id: Number.parseInt(process.env.APP_ID),
+      privateKey: process.env.PRIVATE_KEY.replace(/\\n/g, '\n'),
+      installationId: Number.parseInt(req.query.installation_id)
+    });
+    const authData = await auth({ type: "oauth", code: Number.parseInt(req.query.code) });
+    app.log(authData)
+    const baseOctokit = new Octokit({ auth: authData.token })
     baseOctokit.repos.createForAuthenticatedUser({
       name: process.env.BASE_REPO,
       description: 'A repository used by Personal Archiver bot',
