@@ -1,11 +1,11 @@
+import { createAppAuth } from '@octokit/auth-app'
+import { RequestError } from '@octokit/request-error'
+import { Octokit } from 'probot'
 const fs = require('fs')
 const memjs = require('memjs')
 const path = require('path')
 const TgBot = require('node-telegram-bot-api')
 const enforce = require('express-sslify')
-import { createAppAuth } from '@octokit/auth-app'
-import { RequestError } from '@octokit/request-error'
-import { Octokit } from 'probot'
 
 const initBase = require('./src/initBaseRepo')
 const updateBase = require('./src/updateBaseRepo')
