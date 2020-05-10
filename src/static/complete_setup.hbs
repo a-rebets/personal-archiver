@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Personal Archiver | Complete setup</title>
+    <link rel="icon" href="/static/pa-logo.png">
+    <link rel="stylesheet" href="/static/setup.css">
+  </head>
+  <body class="height-full bg-gray-light">
+    <div class="">
+      <img src="/probot/static/robot.svg" alt="Probot Logo" width="100" class="mb-6">
+        <h1>
+          Welcome to {{#if pkg.name }}{{ pkg.name }}{{else}}your Probot App{{/if}}
+          {{#if version}}
+            <span class="Label Label--outline v-align-middle ml-2 text-gray-light">v{{ pkg.version }}</span>
+          {{/if}}
+        </h1>
+
+        {{#if pkg.description }}
+          <p>{{ pkg.description }}</p>
+        {{else}}
+          <p>This app was built using <a href="https://github.com/probot/probot">Probot</a>, a framework for building GitHub Apps.</p>
+        {{/if}}
+      </div>
+
+      <div class="mt-4">
+        <h4 class="alt-h4 text-gray-light">Need help?</h4>
+        <div class="d-flex flex-justify-center mt-2">
+          <a href="https://probot.github.io/docs/" class="btn btn-outline mr-2">Documentation</a>
+          <a href="https://probot-slackin.herokuapp.com/" class="btn btn-outline">Chat on Slack</a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
