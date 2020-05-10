@@ -3,6 +3,7 @@ const memjs = require('memjs')
 const path = require('path')
 const TgBot = require('node-telegram-bot-api')
 const enforce = require('express-sslify')
+const { createAppAuth } = require('@octokit/auth-app')
 
 const initBase = require('./src/initBaseRepo')
 const updateBase = require('./src/updateBaseRepo')
@@ -44,9 +45,23 @@ module.exports = app => {
   app.route().use(enforce.HTTPS({ trustProtoHeader: true }))
   app.log('Personal Archiver is running successfully.')
   initBot(app.route('/tg'))
-  app.route().get('/setup', (req, res) => {
-    app.log(req.params)
-    app.log(req.body)
+  app.route().get('/setup', async (req, res) => {
+    const tempOctokit = new app.Octokit({
+      authStrategy: createAppAuth,
+      auth: {
+        id: process.env.APP_ID,
+        installationId: req.query.installation_id,
+        privateKey: process.env.PRIVATE_KEY.replace(/\\n/g, '\n')
+      }
+    })
+    const baseOctokit = new app.Octokit({
+      auth: (await tempOctokit.auth({ type: 'oauth', code: req.query.code })).token
+    })
+    baseOctokit.repos.createForAuthenticatedUser({
+      name: process.env.BASE_REPO,
+      description: 'A repository used by Personal Archiver bot',
+      private: true
+    })
     res.sendStatus(200)
   })
 
@@ -64,7 +79,7 @@ module.exports = app => {
       : { id: null, waitlist: [], track: [], omit: [] }
 
     app.log(`App is running as per [${paramObj.evt.e}]`)
-    
+
     /* if (paramObj.evt.e === 'installation' && paramObj.evt.a === 'created') {
       bot.onText(/\B\/start\b/, async (msg) => {
         if (!cacheObj.id) {
