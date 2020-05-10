@@ -48,15 +48,14 @@ module.exports = app => {
   app.log('Personal Archiver is running successfully.')
   initBot(app.route('/tg'))
   app.route().get('/setup', async (req, res) => {
-    app.log(`${req.query.code} ${req.query.installation_id} ${process.env.PRIVATE_KEY.replace(/\\n/g, '\n')}`)
     const auth = createAppAuth({
-      id: Number.parseInt(process.env.APP_ID),
+      id: process.env.APP_ID,
       privateKey: process.env.PRIVATE_KEY.replace(/\\n/g, '\n'),
       clientId: process.env.CLIENT_ID,
       clientSecret: process.env.CLIENT_SECRET,
       redirect_uri: "https://github-archiver.online/setup/success"
     })
-    const authData = await auth({ type: 'oauth', code: Number.parseInt(req.query.code) })
+    const authData = await auth({ type: 'oauth', code: req.query.code })
     app.log(authData)
     // const baseOctokit = new Octokit({ auth: authData.token })
     // baseOctokit.repos.createForAuthenticatedUser({
