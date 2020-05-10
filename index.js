@@ -51,22 +51,15 @@ module.exports = app => {
       id: process.env.APP_ID,
       privateKey: process.env.PRIVATE_KEY.replace(/\\n/g, '\n'),
       clientId: process.env.CLIENT_ID,
-      clientSecret: process.env.CLIENT_SECRET,
-      redirect_uri: 'https://github-archiver.online/setup/success'
+      clientSecret: process.env.CLIENT_SECRET
     })
     const authData = await auth({ type: 'oauth', code: req.query.code })
-    app.log(authData)
-    // const baseOctokit = new Octokit({ auth: authData.token })
-    // baseOctokit.repos.createForAuthenticatedUser({
-    //   name: process.env.BASE_REPO,
-    //   description: 'A repository used by Personal Archiver bot',
-    //   private: true
-    // })
-    res.sendStatus(200)
-  })
-
-  app.route().get('/setup/success', async (req, res) => {
-    app.log(req.query)
+    const baseOctokit = new Octokit({ auth: authData.token })
+    baseOctokit.repos.createForAuthenticatedUser({
+      name: process.env.BASE_REPO,
+      description: 'A repository used by Personal Archiver bot',
+      private: true
+    })
     res.sendStatus(200)
   })
 
@@ -84,7 +77,9 @@ module.exports = app => {
       : { id: null, waitlist: [], track: [], omit: [] }
 
     app.log(`App is running as per [${paramObj.evt.e}]`)
+    if (paramObj.evt.e === 'installation' && paramObj.evt.a === 'created') {
 
+    }
     /* if (paramObj.evt.e === 'installation' && paramObj.evt.a === 'created') {
       bot.onText(/\B\/start\b/, async (msg) => {
         if (!cacheObj.id) {
