@@ -46,7 +46,6 @@ module.exports = app => {
   initBot(app.route('/tg'))
   app.route().get('/setup', (req, res) => {
     app.log(req.body)
-    res.render('vies',)
     res.sendStatus(200)
   })
 
