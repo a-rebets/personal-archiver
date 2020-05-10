@@ -45,6 +45,8 @@ module.exports = app => {
   app.log('Personal Archiver is running successfully.')
   initBot(app.route('/tg'))
   app.route().get('/setup', (req, res) => {
+    app.log(req.params)
+    app.log(req.body)
     res.sendStatus(200)
   })
 
@@ -62,8 +64,7 @@ module.exports = app => {
       : { id: null, waitlist: [], track: [], omit: [] }
 
     app.log(`App is running as per [${paramObj.evt.e}]`)
-    app.log(app.app)
-    app.log(app.Octokit)
+    
     /* if (paramObj.evt.e === 'installation' && paramObj.evt.a === 'created') {
       bot.onText(/\B\/start\b/, async (msg) => {
         if (!cacheObj.id) {
