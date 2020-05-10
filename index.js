@@ -4,6 +4,7 @@ const path = require('path')
 const TgBot = require('node-telegram-bot-api')
 const enforce = require('express-sslify')
 const { createAppAuth } = require('@octokit/auth-app')
+const { Octokit } = require('probot')
 
 const initBase = require('./src/initBaseRepo')
 const updateBase = require('./src/updateBaseRepo')
@@ -46,7 +47,7 @@ module.exports = app => {
   app.log('Personal Archiver is running successfully.')
   initBot(app.route('/tg'))
   app.route().get('/setup', async (req, res) => {
-    const tempOctokit = new app.Octokit({
+    const tempOctokit = new Octokit({
       authStrategy: createAppAuth,
       auth: {
         id: process.env.APP_ID,
@@ -54,7 +55,7 @@ module.exports = app => {
         privateKey: process.env.PRIVATE_KEY.replace(/\\n/g, '\n')
       }
     })
-    const baseOctokit = new app.Octokit({
+    const baseOctokit = new Octokit({
       auth: (await tempOctokit.auth({ type: 'oauth', code: req.query.code })).token
     })
     baseOctokit.repos.createForAuthenticatedUser({
