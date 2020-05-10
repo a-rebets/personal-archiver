@@ -43,6 +43,7 @@ const getKeyboardOptsResp = (path) => ({
  * @param {import('probot').Application} app
  */
 module.exports = app => {
+  
   app.route().use(enforce.HTTPS({ trustProtoHeader: true }))
   app.log('Personal Archiver is running successfully.')
   initBot(app.route('/tg'))
@@ -51,16 +52,23 @@ module.exports = app => {
     const auth = createAppAuth({
       id: Number.parseInt(process.env.APP_ID),
       privateKey: process.env.PRIVATE_KEY.replace(/\\n/g, '\n'),
-      installationId: Number.parseInt(req.query.installation_id)
-    });
-    const authData = await auth({ type: "oauth", code: Number.parseInt(req.query.code) });
-    app.log(authData)
-    const baseOctokit = new Octokit({ auth: authData.token })
-    baseOctokit.repos.createForAuthenticatedUser({
-      name: process.env.BASE_REPO,
-      description: 'A repository used by Personal Archiver bot',
-      private: true
+      clientId: process.env.CLIENT_ID,
+      clientSecret: process.env.CLIENT_SECRET,
+      redirect_uri: "https://github-archiver.online/setup/success"
     })
+    const authData = await auth({ type: 'oauth', code: Number.parseInt(req.query.code) })
+    app.log(authData)
+    // const baseOctokit = new Octokit({ auth: authData.token })
+    // baseOctokit.repos.createForAuthenticatedUser({
+    //   name: process.env.BASE_REPO,
+    //   description: 'A repository used by Personal Archiver bot',
+    //   private: true
+    // })
+    res.sendStatus(200)
+  })
+
+  app.route().get('/setup/success', async (req, res) => {
+    app.log(req.query)
     res.sendStatus(200)
   })
 
