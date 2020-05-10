@@ -3,8 +3,9 @@ const memjs = require('memjs')
 const path = require('path')
 const TgBot = require('node-telegram-bot-api')
 const enforce = require('express-sslify')
-const { createAppAuth } = require('@octokit/auth-app')
-const { Octokit } = require('probot')
+import { createAppAuth } from '@octokit/auth-app'
+import { RequestError } from '@octokit/request-error'
+import { Octokit } from 'probot'
 
 const initBase = require('./src/initBaseRepo')
 const updateBase = require('./src/updateBaseRepo')
@@ -53,13 +54,8 @@ module.exports = app => {
       clientId: process.env.CLIENT_ID,
       clientSecret: process.env.CLIENT_SECRET
     })
-    const authData = await auth({ type: 'oauth', code: req.query.code })
-    const baseOctokit = new Octokit({ auth: authData.token })
-    baseOctokit.repos.createForAuthenticatedUser({
-      name: process.env.BASE_REPO,
-      description: 'A repository used by Personal Archiver bot',
-      private: true
-    })
+    // const authData = await auth({ type: 'oauth', code: req.query.code })
+    // const baseOctokit = new Octokit({ auth: authData.token })
     res.sendStatus(200)
   })
 
