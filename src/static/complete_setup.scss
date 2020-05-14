@@ -1,0 +1,439 @@
+:root {
+  --mdc-theme-primary:#ffc107;
+  --mdc-theme-secondary:#f57c00;
+  --overlay-answer-icon-ok:#00c853;
+  --theme-background-light:#fafafa;
+  --theme-background-dark:#241A11;
+  color-scheme: light dark;
+}
+
+a {
+  text-decoration: none;
+}
+
+button {
+  overflow: hidden;
+}
+
+body {
+  display: grid;
+  gap: 20px 1px;
+  grid-template-areas: "sidebar_left logo logo sidebar_right" "sidebar_left content content sidebar_right" "sidebar_left footer footer sidebar_right";
+  grid-template-columns: 1fr 2fr 2fr 1fr;
+  grid-template-rows: 0.7fr 2.5fr 1fr;
+  margin: 0;
+  background-color: var(--theme-background-light);
+}
+
+.sidebar_left {
+  grid-area: sidebar_left;
+}
+
+.sidebar_right {
+  grid-area: sidebar_right;
+}
+
+.logo, .content {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  grid-area: logo;
+  justify-content: center;
+}
+
+.logo img {
+  content: url("https://raw.githubusercontent.com/apopelyshev/personal-archiver/master/src/static/media/logo-light.png");
+  margin: 0 0 -15px -15px;
+  width: 300px;
+  user-select: none;
+}
+
+.content {
+  grid-area: content;
+}
+
+.greeting {
+  margin: 0 0 20px;
+}
+
+.info {
+  margin: 0 0 25px;
+  max-width: 500px;
+  text-align: justify;
+}
+
+.code-wrapper {
+  position: relative;
+}
+
+.expire-block {
+  margin-top: 15px;
+  max-width: 385px;
+  width: 100%;
+
+  span {
+    display: block;
+    margin-bottom: 5px;
+  }
+}
+
+.code-overlay {
+  position: absolute;
+  left: calc(-3px - 2%);
+  top: calc(-3px - 4%);
+  width: 104%;
+  height: 108%;
+  background-color: #fff;
+  z-index: 5;
+  clip-path: circle(0%);
+  border-radius: 15px;
+  border: 3px dashed rgba(0, 0, 0, 0);
+  user-select: none;
+
+  &.active {
+    transition: border-color .6s .5s;
+    border-color: var(--mdc-theme-text-secondary-on-background);
+    clip-path: circle(75%);
+    animation: .6s ease-in circle;
+  }
+
+  .mdc-circular-progress {
+    position: absolute;
+    margin: auto;
+    left: 0;
+    right: 0;
+  }
+}
+
+@keyframes circle {
+  0% {
+    clip-path: circle(0%);
+  }
+
+  100% {
+    clip-path: circle(75%);
+  }
+}
+
+.overlay-answer {
+  position: absolute;
+  margin: auto;
+  left: 0;
+  right: 0;
+}
+
+.code-overlay.answer-ready {
+  .mdc-circular-progress {
+    display: none;
+  }
+
+  .overlay-answer {
+    opacity: 1;
+  }
+}
+
+.overlay-answer {
+  transition: opacity 1s;
+  opacity: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  top: 0;
+  bottom: 0;
+  text-align: center;
+  padding: 0 30px;
+
+  span:after {
+    font-size: 35px;
+    margin: -10px 0 5px 0;
+    content: "help";
+  }
+
+  &.ok span:after {
+    color: var(--overlay-answer-icon-ok);
+    content: "check_circle";
+  }
+
+  &.error span:after {
+    color: var(--mdc-theme-error);
+    content: "cancel";
+  }
+}
+
+.plane {
+  margin: -10px 0;
+  user-select: none;
+  width: 200px;
+  z-index: -1;
+}
+
+.footer {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  grid-area: footer;
+}
+
+.credit-title {
+  color: var(--mdc-theme-text-secondary-on-light);
+  margin-top: 25px;
+}
+
+.credit-icons {
+  display: flex;
+  justify-content: center;
+
+  img {
+    max-width: 40px;
+  }
+
+  a {
+    &:nth-child(1) img {
+      content: url("https://raw.githubusercontent.com/apopelyshev/personal-archiver/master/src/static/media/github-light.png");
+    }
+
+    &:nth-child(2) img {
+      content: url("https://raw.githubusercontent.com/apopelyshev/personal-archiver/master/src/static/media/probot-light.png");
+    }
+
+    display: block;
+    margin: 0 20px;
+  }
+}
+
+.code {
+  display: flex;
+  max-width: 385px;
+  position: relative;
+  text-align: center;
+  user-select: none;
+}
+
+.digit {
+  &:not(:last-child) {
+    margin-right: 5px;
+  }
+
+  -moz-box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.3), inset 2px 4px 0 0 rgba(255, 255, 255, 0.08);
+  -webkit-box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.3), inset 2px 4px 0 0 rgba(255, 255, 255, 0.08);
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.3), inset 2px 4px 0 0 rgba(255, 255, 255, 0.08);
+  height: calc(35px + 8vmin);
+  position: relative;
+  width: 13vw;
+  z-index: 0;
+
+  > span {
+    color: #212121;
+    font: normal calc(30px + 6.2vmin) Roboto;
+    font-weight: 500;
+    left: 0;
+    margin: auto;
+    position: absolute;
+    right: 0;
+    display: block;
+  }
+
+  .top {
+    &:after {
+      border-bottom: 1.5px solid rgba(0, 0, 0, 0.1);
+      bottom: 0;
+      content: "";
+      height: 100%;
+      left: 0;
+      position: absolute;
+      width: 100%;
+      z-index: -1;
+    }
+
+    -moz-border-radius-topleft: 10px;
+    -moz-border-radius-topright: 10px;
+    -moz-transform: perspective(200px) rotateX(0);
+    -ms-transform: perspective(200px) rotateX(0);
+    -webkit-border-top-left-radius: 10px;
+    -webkit-border-top-right-radius: 10px;
+    -webkit-transform: perspective(200px) rotateX(0);
+    -webkit-transform-origin: 50% 100%;
+    background-color: #f7f7f7;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    top: 0;
+    transform: perspective(200px) rotateX(0);
+    transform-origin: 50% 100%;
+    z-index: 3;
+    height: calc(50% + 1px);
+
+    span {
+      left: 0;
+      margin: auto;
+      position: absolute;
+      right: 0;
+      top: 0;
+    }
+  }
+
+  .bottom {
+    z-index: 1;
+    opacity: 1;
+
+    &:before {
+      -moz-border-radius-topleft: 10px;
+      -moz-border-radius-topright: 10px;
+      -webkit-border-top-left-radius: 10px;
+      -webkit-border-top-right-radius: 10px;
+      background-color: rgba(0, 0, 0, 0.02);
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
+      content: "";
+      display: block;
+      height: 50%;
+      left: 0;
+      position: absolute;
+      top: 0;
+      width: 100%;
+    }
+  }
+
+  .bottom-back {
+    -moz-border-radius-topleft: 10px;
+    -moz-border-radius-topright: 10px;
+    -webkit-border-top-left-radius: 10px;
+    -webkit-border-top-right-radius: 10px;
+    background-color: #f7f7f7;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    height: 50%;
+    overflow: hidden;
+    top: 0;
+    z-index: 2;
+
+    span {
+      left: 0;
+      margin: auto;
+      position: absolute;
+      right: 0;
+      top: 0;
+    }
+  }
+
+  .top {
+    -moz-backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    overflow: hidden;
+    position: absolute;
+  }
+
+  .top-back {
+    -moz-backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    overflow: hidden;
+    position: absolute;
+    -moz-border-radius-bottomleft: 10px;
+    -moz-border-radius-bottomright: 10px;
+    -moz-transform: perspective(200px) rotateX(180deg);
+    -ms-transform: perspective(200px) rotateX(180deg);
+    -webkit-border-bottom-left-radius: 10px;
+    -webkit-border-bottom-right-radius: 10px;
+    -webkit-transform: perspective(200px) rotateX(180deg);
+    -webkit-transform-origin: 50% 0;
+    background-color: #fff;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    bottom: 0;
+    transform: perspective(200px) rotateX(180deg);
+    transform-origin: 50% 0;
+    z-index: 4;
+    height: calc(50% + 1.5px);
+
+    span {
+      left: 0;
+      margin: auto;
+      position: absolute;
+      right: 0;
+      top: calc(3px - 100%);
+    }
+  }
+}
+
+@media only screen and (max-width: 550px) {
+  body {
+    grid-template-columns: 0.3fr 2fr 2fr 0.3fr;
+  }
+
+  .logo img {
+    width: calc(110px + 40vw);
+  }
+
+  .credit-icons img {
+    max-width: calc(20px + 3vw);
+  }
+
+  .plane {
+    width: calc(150px + 10vw);
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: var(--theme-background-dark);
+  }
+
+  .logo img {
+    content: url("https://raw.githubusercontent.com/apopelyshev/personal-archiver/master/src/static/media/logo-dark.png");
+  }
+
+  p, h4, h6 {
+    color: var(--mdc-theme-text-primary-on-dark);
+  }
+
+  .overlay-answer {
+    span:after, &.error span:after, &.ok span:after {
+      color: var(--mdc-theme-text-primary-on-dark);
+    }
+  }
+
+  .code-overlay {
+    background-color: var(--theme-background-dark);
+
+    &.active {
+      border-color: var(--mdc-theme-text-secondary-on-dark);
+    }
+  }
+
+  .digit {
+    -moz-box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.3), inset 2px 4px 0 0 rgba(0, 0, 0, 0.08);
+    -webkit-box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.3), inset 2px 4px 0 0 rgba(0, 0, 0, 0.08);
+    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.3), inset 2px 4px 0 0 rgba(0, 0, 0, 0.08);
+    background-color: #212121;
+
+    .top-back {
+      background-color: #212121;
+    }
+
+    .bottom-back, .top {
+      background-color: #1b1b1b;
+    }
+
+    > span {
+      color: #f5f5f5;
+    }
+  }
+
+  p.credit-title, .expire-block span {
+    color: var(--mdc-theme-text-secondary-on-dark);
+  }
+
+  .credit-icons a {
+    &:nth-child(1) img {
+      content: url("https://raw.githubusercontent.com/apopelyshev/personal-archiver/master/src/static/media/github-dark.png");
+    }
+
+    &:nth-child(2) img {
+      content: url("https://raw.githubusercontent.com/apopelyshev/personal-archiver/master/src/static/media/probot-dark.png");
+    }
+  }
+}

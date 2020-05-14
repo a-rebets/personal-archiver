@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,29 +8,114 @@
     <link rel="icon" href="/static/pa-logo.png">
     <link rel="stylesheet" href="/static/setup.css">
   </head>
-  <body class="height-full bg-gray-light">
-    <div class="">
-      <img src="/probot/static/robot.svg" alt="Probot Logo" width="100" class="mb-6">
-        <h1>
-          Welcome to {{#if pkg.name }}{{ pkg.name }}{{else}}your Probot App{{/if}}
-          {{#if version}}
-            <span class="Label Label--outline v-align-middle ml-2 text-gray-light">v{{ pkg.version }}</span>
-          {{/if}}
-        </h1>
-
-        {{#if pkg.description }}
-          <p>{{ pkg.description }}</p>
-        {{else}}
-          <p>This app was built using <a href="https://github.com/probot/probot">Probot</a>, a framework for building GitHub Apps.</p>
-        {{/if}}
-      </div>
-
-      <div class="mt-4">
-        <h4 class="alt-h4 text-gray-light">Need help?</h4>
-        <div class="d-flex flex-justify-center mt-2">
-          <a href="https://probot.github.io/docs/" class="btn btn-outline mr-2">Documentation</a>
-          <a href="https://probot-slackin.herokuapp.com/" class="btn btn-outline">Chat on Slack</a>
+  <body>
+    <div class="logo">
+      <img draggable="false" alt="Personal Archiver"/>
+    </div>
+    <div class="content">
+      <h4 class="mdc-typography--headline4 greeting">Hey there!</h4>
+      <p class="mdc-typography--subtitle1 info">Thank you for installing Personal Archiver. Now we just need to complete the setup. Head to the Telegram app and type in the chat with our bot (link below) the code you are seeing on the screen:</p>
+      <div class="code-wrapper">
+        <div class="code-overlay">
+          <div class="overlay-answer">
+            <span class="material-icons"></span>
+            <h6 style="text-align: center;margin:0" class="mdc-typography--headline6">Some standalone message about your authorization.</h6>
+          </div>
+          <div class="mdc-circular-progress mdc-circular-progress--large" role="progressbar" aria-label="Example Progress Bar" aria-valuemin="0" aria-valuemax="1" data-mdc-auto-init="MDCCircularProgress" style="top: 25%">
+            <div class="mdc-circular-progress__determinate-container">
+              <svg class="mdc-circular-progress__determinate-circle-graphic" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                <circle class="mdc-circular-progress__determinate-circle" cx="24" cy="24" r="18" stroke-dasharray="113.097" stroke-dashoffset="113.097" />
+              </svg>
+            </div>
+            <div class="mdc-circular-progress__indeterminate-container">
+              <div class="mdc-circular-progress__spinner-layer">
+                <div class="mdc-circular-progress__circle-clipper mdc-circular-progress__circle-left">
+                  <svg class="mdc-circular-progress__indeterminate-circle-graphic" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="24" cy="24" r="18" stroke-dasharray="113.097" stroke-dashoffset="56.549" />
+                  </svg>
+                </div>
+                <div class="mdc-circular-progress__gap-patch">
+                  <svg class="mdc-circular-progress__indeterminate-circle-graphic" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="24" cy="24" r="18" stroke-dasharray="113.097" stroke-dashoffset="56.549" />
+                  </svg>
+                </div>
+                <div class="mdc-circular-progress__circle-clipper mdc-circular-progress__circle-right">
+                  <svg class="mdc-circular-progress__indeterminate-circle-graphic" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="24" cy="24" r="18" stroke-dasharray="113.097" stroke-dashoffset="56.549" />
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
+        <div class="code">
+          {{#each comments}}
+          <div class="digit">
+            <span class="top">
+              <span>0</span>
+            </span>
+            <span class="top-back">
+              <span>0</span>
+            </span>
+            <span class="bottom">0</span>
+            <span class="bottom-back">
+              <span>0</span>
+            </span>
+          </div>
+          {{/each}}
+        </div>
+        <div class="expire-block">
+          <span class="mdc-typography--caption">This code will expire in a while...</span>
+          <div role="progressbar" class="mdc-linear-progress expire-bar" aria-label="Code expiration bar" aria-valuemin="0" aria-valuemax="1" aria-valuenow="0" data-mdc-auto-init="MDCLinearProgress">
+            <div class="mdc-linear-progress__buffer">
+              <div class="mdc-linear-progress__buffer-bar"></div>
+              <div class="mdc-linear-progress__buffer-dots"></div>
+            </div>
+            <div class="mdc-linear-progress__bar mdc-linear-progress__primary-bar">
+              <span class="mdc-linear-progress__bar-inner"></span>
+            </div>
+            <div class="mdc-linear-progress__bar mdc-linear-progress__secondary-bar">
+              <span class="mdc-linear-progress__bar-inner"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <img draggable="false" class="plane" src="./static/media/go.gif" alt="Go to Telegram" />
+      <a href="https://t.me/github_archiver_bot" target="_blank">
+        <button class="mdc-fab mdc-fab--extended" data-mdc-auto-init="MDCRipple">
+          <div class="mdc-fab__ripple"></div>
+          <span class="material-icons mdc-fab__icon">open_in_new</span>
+          <span class="mdc-fab__label">Contact our bot</span>
+        </button>
+      </a>
+      <div class="warning mdc-card mdc-card--outlined">
+        <div class="mdc-card__primary-action" data-mdc-auto-init="MDCRipple" tabindex="0">
+          <div class="card-text-wrapper">
+            <p class="mdc-typography--subtitle1">
+              <span style="vertical-align:sub;" class="material-icons">warning</span> Caution
+            </p>
+            <p class="mdc-typography--subtitle2">
+              Remember the following conditions apply
+            </p>
+          </div>
+          <div class="card-text-wrapper">
+            <p style="text-align:justify" class="mdc-typography--body2">
+              - <u>closing this page</u> leads to us losing your Github identity, thus to finish the setup next time you'll need to <u>authorize the app again</u> (via the archiver's homepage)<br>
+              - a Telegram user cannot provide <u>more than 5 wrong codes</u> to the bot, otherwise that user will be <u>banned by the bot for 3 hours</u>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <p class="credit-title mdc-typography--body2">BUILT WITH</p>
+      <div class="credit-icons">
+        <a href="https://developer.github.com/">
+          <img alt="Github API">
+        </a>
+        <a href="https://probot.github.io/">
+          <img alt="Probot main page">
+        </a>
       </div>
     </div>
   </body>
